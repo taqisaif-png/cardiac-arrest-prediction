@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(mkdir -p notebooks docs data)",
+      "Bash(touch data/.gitkeep)",
+      "Bash(mv scripts/README.md docs/)",
+      "Bash(mv requirements.txt docs/)",
+      "Bash(mv model.ipynb final_model.ipynb nlp_notes.ipynb notebooks/)",
+      "Bash(grep -v '^\\\\.$')",
+      "Bash(grep -v \"\\\\.csv$\\\\|\\\\.RData\\\\|\\\\.RDataTmp\\\\|\\\\.Rhistory\\\\|\\\\.DS_Store\\\\|\\\\.nb\\\\.html$\\\\|bq-results\\\\|extra_data\\\\|master_data\\\\|model_data\\\\|final_data\\\\|vitals_\\\\|labs_\\\\|age_gend\\\\|arrest_\\\\|nlp_v2\\\\|pain\\\\|tansp\\\\|physio\\\\|feature_imp\\\\|bquxjob\\\\|\\\\.png$\\\\|progress\\\\|proposal\\\\|alias$\")",
+      "Bash(mv *.csv data/)",
+      "Bash(mv extra_data data/)",
+      "Bash(mv Untitld.nb.html data_work.nb.html extra_data.nb.html notebooks/)",
+      "Bash(mv data_work.Rmd extra_data.Rmd Untitled.Rmd Untitld.Rmd docs/)",
+      "Bash(mv progress_report.docx proposal_final.docx feature_importance.png docs/)"
+    ]
+  }
+}

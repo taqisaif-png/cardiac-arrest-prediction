@@ -1,0 +1,29 @@
+# Data files
+*.csv
+*.xlsx
+*.parquet
+*.RData
+*.RDataTmp
+*.docx
+
+# Notebooks
+*.ipynb
+*.nb.html
+*.Rmd
+*.Rhistory
+.claude
+
+# Cache
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+
+# Environment
+.env
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

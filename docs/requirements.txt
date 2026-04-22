@@ -1,0 +1,9 @@
+pandas>=2.0
+numpy>=1.26
+xgboost>=2.0
+scikit-learn>=1.4
+sentence-transformers>=3.0
+torch>=2.0
+dateparser>=1.2
+duckdb>=1.0
+stanza>=1.8
