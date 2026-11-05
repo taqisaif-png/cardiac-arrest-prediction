@@ -63,8 +63,10 @@ Key finding: chief complaint embeddings transfer best to eICU (free text is inst
 
 ```
 .
-├── README.md
-├── requirements.txt
+├── docs/
+│   ├── README.md                # This file
+│   ├── requirements.txt
+│   └── feature_importance.png   # XGBoost feature importance
 │
 ├── scripts/
 │   ├── prepare_features.py      # Data loading, cleaning, categorical encoding
@@ -73,12 +75,10 @@ Key finding: chief complaint embeddings transfer best to eICU (free text is inst
 │   ├── evaluate.py              # Feature-group ablation study
 │   └── nlp_arrest_time.py       # Regex + Stanza NER extraction of arrest times from notes
 │
-├── model.ipynb                  # Early exploration: RF, SMOTE, embedding comparisons
-├── final_model.ipynb            # Final pipeline with eICU validation and ablation
-├── nlp_notes.ipynb              # Arrest time extraction experiments
-│
-└── data_work.Rmd                # R/DuckDB data extraction from MIMIC-IV raw files
+└── data/                        # Empty; place credentialed MIMIC-IV / eICU extracts here
 ```
+
+Exploration notebooks and the R/DuckDB extraction script are not included in this repository.
 
 Data files (not tracked — require MIMIC-IV and eICU credentialed access):
 - `final_data_complete.csv` — MIMIC-IV cohort with all features (79 cols, 19k rows)
@@ -91,10 +91,10 @@ Data files (not tracked — require MIMIC-IV and eICU credentialed access):
 ## Running the Pipeline
 
 ```bash
-pip install -r requirements.txt
+pip install -r docs/requirements.txt
 
-# Step 1: Extract data (requires MIMIC-IV raw files on disk)
-# Run data_work.Rmd in RStudio → produces final_data_complete.csv + vitals_features.csv
+# Step 1: Extract the MIMIC-IV and eICU cohorts (requires credentialed PhysioNet access)
+# and save them to data/ as final_data_complete.csv, vitals_features.csv, extra_data_1.csv
 
 # Step 2: Train and evaluate the full model
 python scripts/train.py
@@ -106,7 +106,7 @@ python scripts/evaluate.py
 python scripts/nlp_arrest_time.py
 ```
 
-The embedding step runs automatically inside `train.py` and `evaluate.py`. It uses Apple MPS by default — edit `DEVICE` in `src/embed_text.py` for CUDA or CPU.
+The embedding step runs automatically inside `train.py` and `evaluate.py`. It uses Apple MPS by default — edit `DEVICE` in `scripts/embed_text.py` for CUDA or CPU.
 
 ---
 
