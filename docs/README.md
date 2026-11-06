@@ -1,6 +1,6 @@
 # Cardiac Arrest Prediction from ED Presentations
 
-Early prediction of in-hospital cardiac arrest using structured vitals, labs, and free-text chief complaints extracted from MIMIC-IV (development) and eICU (external validation).
+Early prediction of in-hospital cardiac arrest using structured vitals, labs, and free text (MIMIC-IV chief complaints; eICU admission diagnoses) from MIMIC-IV (development) and eICU (external validation). Includes a label audit that separates true in-hospital arrests from patients who arrested before arrival.
 
 ---
 
@@ -36,7 +36,7 @@ We train on patients who transitioned from the ED directly to an ICU (within 1 h
 | Triage | `triage_hr/sbp/dbp/rr/spo2`, `acuity`, `pain_score`, `arrival_transport` | First ED measurements |
 | Serial vitals | `{hr,sbp,dbp,rr,spo2}_mean_{1-5}` | Mean per quintile of ED stay |
 | Labs | `mean/max/min_{Lactate,TroponinT,pH,pO2,...}` | 20 clinically relevant panels |
-| Chief complaint | `cc_0` … `cc_767` | 768-dim embedding via all-mpnet-base-v2 |
+| Free text | `cc_0` … `cc_767` | 768-dim all-mpnet-base-v2 embedding of the MIMIC-IV chief complaint, or the eICU APACHE admission diagnosis (`admission_dx`) |
 
 Total: ~835 features in the full model (57 structured + 768 embedding).
 
@@ -53,9 +53,28 @@ Total: ~835 features in the full model (57 structured + 768 embedding).
 | labs + embeddings | 0.905 | 0.49 | 0.951 | 0.60 |
 | **all features** | **0.921** | **0.51** | **0.955** | **0.47** |
 
-Decision threshold: 0.3 (tuned for recall on the positive class).
+Decision threshold: 0.3 (tuned for recall on the positive class). AUC measures ranking, while recall at a fixed threshold depends on calibration, which does not transfer across datasets. That is why a feature set can have high eICU AUC and near-zero eICU recall.
 
-Key finding: chief complaint embeddings transfer best to eICU (free text is institution-agnostic), while structured vitals are most MIMIC-specific.
+### Interpreting the eICU results: label leakage
+
+The eICU AUC (0.955) is higher than the internal MIMIC-IV AUC (0.921), which is a warning sign, not a success. Two sources of leakage inflate it:
+
+1. **The label includes out-of-hospital arrests.** The ICD code is attached to the whole hospitalization, so patients who arrested *before* arriving (OHCA) are labeled positive, even though there is nothing left to predict.
+2. **eICU's text field can contain the answer.** The eICU embedding uses the APACHE admission diagnosis (`admission_dx`), which is assigned at ICU admission and can directly state "cardiac arrest." The embeddings-only model reaching 0.922 AUC on eICU reflects this.
+
+These results are kept for transparency, but they overstate true predictive performance.
+
+---
+
+## Label Audit and In-Hospital-Only Evaluation
+
+To measure real prediction of in-hospital cardiac arrest (IHCA), the label itself was audited:
+
+- Extracted arrest times from discharge notes with regex and Stanza NER (`scripts/nlp_arrest_time.py`).
+- Hand-reviewed 104 notes in a Streamlit chart-review tool to separate out-of-hospital from in-hospital arrests.
+- Trained a TF-IDF classifier on the reviewed notes to separate OHCA from IHCA at scale (CV AUC 0.909).
+
+On the stricter IHCA-only test set, the model reaches **AUC 0.814**, compared with **~0.51** for the MEWS and NEWS early-warning scores. This is the headline result: lower than the leaky numbers above, but it measures what the model is meant to do.
 
 ---
 
