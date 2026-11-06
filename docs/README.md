@@ -72,7 +72,7 @@ To measure real prediction of in-hospital cardiac arrest (IHCA), the label itsel
 
 - Extracted arrest times from discharge notes with regex and Stanza NER (`scripts/nlp_arrest_time.py`).
 - Hand-reviewed 104 notes in a Streamlit chart-review tool to separate out-of-hospital from in-hospital arrests.
-- Trained a TF-IDF classifier on the reviewed notes to separate OHCA from IHCA at scale (CV AUC 0.909).
+- Trained a TF-IDF classifier on the reviewed notes to separate OHCA from IHCA at scale (AUC 0.963).
 
 On the stricter IHCA-only test set, the model reaches **AUC 0.814**, compared with **~0.51** for the MEWS and NEWS early-warning scores. This is the headline result: lower than the leaky numbers above, but it measures what the model is meant to do.
 
